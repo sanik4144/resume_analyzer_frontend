@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:3000';
+const rawBaseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+const API_BASE_URL = rawBaseURL.endsWith('/') ? rawBaseURL.slice(0, -1) : rawBaseURL;
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(10px); }
