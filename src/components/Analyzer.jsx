@@ -295,6 +295,7 @@ const Analyzer = () => {
       data.append(key, formData[key]);
     });
 
+    console.log('Attempting analysis at:', `${API_BASE_URL}/analyze`);
     try {
       const response = await axios.post(`${API_BASE_URL}/analyze`, data);
       if (response.data.success) {
@@ -303,7 +304,10 @@ const Analyzer = () => {
         throw new Error(response.data.message || "Analysis failed");
       }
     } catch (err) {
-      setError(err.response?.data?.error || err.message || "Something went wrong");
+      console.error('Analysis error:', err);
+      // More detailed error message for the user
+      const msg = err.response?.data?.error || err.response?.data?.message || err.message || "Network error. Check console for details.";
+      setError(msg);
     } finally {
       setLoading(false);
     }
