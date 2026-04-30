@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-import styled, { keyframes, css } from 'styled-components';
-import axios from 'axios';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import styled, { keyframes } from "styled-components";
 
-const rawBaseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-const API_BASE_URL = rawBaseURL.endsWith('/') ? rawBaseURL.slice(0, -1) : rawBaseURL;
+const rawBaseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+const API_BASE_URL = rawBaseURL.endsWith("/")
+  ? rawBaseURL.slice(0, -1)
+  : rawBaseURL;
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(10px); }
@@ -46,7 +48,7 @@ const FormCard = styled.div`
 const PDFSection = styled.div`
   flex: 1;
   min-width: 400px;
-  display: ${props => props.visible ? 'block' : 'none'};
+  display: ${(props) => (props.visible ? "block" : "none")};
 `;
 
 const CollapsibleHeader = styled.div`
@@ -60,10 +62,20 @@ const CollapsibleHeader = styled.div`
   align-items: center;
   transition: background 0.2s;
 
-  &:hover { background: rgba(255, 255, 255, 0.05); }
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
 
-  span { font-size: 14px; font-weight: 500; }
-  .file-name { font-size: 13px; color: var(--text-muted); margin-left: 8px; font-weight: 400; }
+  span {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .file-name {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-left: 8px;
+    font-weight: 400;
+  }
 `;
 
 const Chevron = styled.svg`
@@ -71,12 +83,12 @@ const Chevron = styled.svg`
   height: 16px;
   color: var(--text-muted);
   transition: transform 0.25s ease;
-  transform: ${props => props.open ? 'rotate(180deg)' : 'rotate(0)'};
+  transform: ${(props) => (props.open ? "rotate(180deg)" : "rotate(0)")};
 `;
 
 const CollapsibleBody = styled.div`
   overflow: hidden;
-  max-height: ${props => props.open ? '800px' : '0'};
+  max-height: ${(props) => (props.open ? "800px" : "0")};
   transition: max-height 0.35s ease;
   background: var(--card-bg);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -99,7 +111,8 @@ const FormGroup = styled.div`
     color: var(--text-muted);
     margin-bottom: 4px;
   }
-  input, textarea {
+  input,
+  textarea {
     width: 100%;
     padding: 10px 12px;
     background: rgba(15, 23, 42, 0.6);
@@ -114,7 +127,9 @@ const FormGroup = styled.div`
       border-color: var(--primary);
     }
   }
-  textarea { resize: vertical; }
+  textarea {
+    resize: vertical;
+  }
 `;
 
 const Button = styled.button`
@@ -128,12 +143,26 @@ const Button = styled.button`
   cursor: pointer;
   transition: opacity 0.2s;
 
-  &:disabled { opacity: 0.6; cursor: not-allowed; }
-  &:hover:not(:disabled) { opacity: 0.9; }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+`;
+
+const CancelButton = styled(Button)`
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  margin-left: 12px;
+  &:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.2);
+  }
 `;
 
 const ResultsSection = styled.div`
-  display: ${props => props.visible ? 'block' : 'none'};
+  display: ${(props) => (props.visible ? "block" : "none")};
 `;
 
 const Metrics = styled.div`
@@ -149,8 +178,16 @@ const MetricCard = styled.div`
   padding: 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
 
-  .label { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
-  .value { font-size: 32px; font-weight: 600; color: ${props => props.color || 'var(--text-main)'}; }
+  .label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .value {
+    font-size: 32px;
+    font-weight: 600;
+    color: ${(props) => props.color || "var(--text-main)"};
+  }
 `;
 
 const ProgressBar = styled.div`
@@ -162,8 +199,8 @@ const ProgressBar = styled.div`
 
   div {
     height: 100%;
-    background: ${props => props.color || 'var(--primary)'};
-    width: ${props => props.width || 0}%;
+    background: ${(props) => props.color || "var(--primary)"};
+    width: ${(props) => props.width || 0}%;
     transition: width 1s ease-out;
   }
 `;
@@ -203,7 +240,9 @@ const List = styled.ul`
     padding: 8px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     color: var(--text-main);
-    &:last-child { border-bottom: none; }
+    &:last-child {
+      border-bottom: none;
+    }
   }
 `;
 
@@ -218,8 +257,8 @@ const Tag = styled.span`
   font-size: 12px;
   padding: 4px 12px;
   border-radius: 999px;
-  background: ${props => props.bgColor || 'rgba(99, 102, 241, 0.1)'};
-  color: ${props => props.textColor || 'var(--primary)'};
+  background: ${(props) => props.bgColor || "rgba(99, 102, 241, 0.1)"};
+  color: ${(props) => props.textColor || "var(--primary)"};
 `;
 
 const SectionTitle = styled.p`
@@ -231,7 +270,12 @@ const SectionTitle = styled.p`
 
 const ResourceBlock = styled.div`
   margin-bottom: 16px;
-  .skill-name { font-size: 14px; font-weight: 500; margin-bottom: 6px; color: var(--accent); }
+  .skill-name {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--accent);
+  }
   .resource-item {
     font-size: 13px;
     color: var(--text-muted);
@@ -245,17 +289,18 @@ const Analyzer = () => {
   const [previewURL, setPreviewURL] = useState(null);
   const [pdfOpen, setPdfOpen] = useState(false);
   const [formData, setFormData] = useState({
-    JOB_ROLE: '',
-    JOB_DESCRIPTION: '',
-    JOB_RESPONSIBILITIES: '',
-    DEADLINE: '',
-    EXPERIENCE_WANTED: '',
-    REQUIRED_SKILLS: '',
-    SPECIAL_NOTES: ''
+    JOB_ROLE: "",
+    JOB_DESCRIPTION: "",
+    JOB_RESPONSIBILITIES: "",
+    DEADLINE: "",
+    EXPERIENCE_WANTED: "",
+    REQUIRED_SKILLS: "",
+    SPECIAL_NOTES: "",
   });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [controller, setController] = useState(null);
 
   useEffect(() => {
     return () => {
@@ -265,7 +310,7 @@ const Analyzer = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (e) => {
@@ -280,36 +325,74 @@ const Analyzer = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Form submitted!"); // Log to verify the function is called
+
+    // Manual validation
     if (!file) {
+      console.log("Validation failed: No file attached");
       setError("Please upload your CV (PDF) first");
       return;
     }
 
+    if (
+      !formData.JOB_ROLE ||
+      !formData.JOB_DESCRIPTION ||
+      !formData.JOB_RESPONSIBILITIES
+    ) {
+      console.log("Validation failed: Missing required text fields");
+      setError("Please fill in Job Role, Description, and Responsibilities");
+      return;
+    }
+
+    const abortController = new AbortController();
+    setController(abortController);
     setLoading(true);
     setError(null);
     setResult(null);
 
     const data = new FormData();
-    data.append('cvFile', file);
-    Object.keys(formData).forEach(key => {
+    data.append("cvFile", file);
+    Object.keys(formData).forEach((key) => {
       data.append(key, formData[key]);
     });
 
-    console.log('Attempting analysis at:', `${API_BASE_URL}/analyze`);
+    console.log("Attempting analysis at:", `${API_BASE_URL}/analyze`);
     try {
-      const response = await axios.post(`${API_BASE_URL}/analyze`, data);
+      const response = await axios.post(`${API_BASE_URL}/analyze`, data, {
+        signal: abortController.signal,
+      });
       if (response.data.success) {
         setResult(response.data.reply);
       } else {
         throw new Error(response.data.message || "Analysis failed");
       }
     } catch (err) {
-      console.error('Analysis error:', err);
+      if (axios.isCancel(err)) {
+        console.log("Analysis canceled by user");
+        return;
+      }
+      console.error("Analysis error:", err);
       // More detailed error message for the user
-      const msg = err.response?.data?.error || err.response?.data?.message || err.message || "Network error. Check console for details.";
+      const msg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        err.message ||
+        "Network error. Check console for details.";
       setError(msg);
     } finally {
+      if (!abortController.signal.aborted) {
+        setLoading(false);
+        setController(null);
+      }
+    }
+  };
+
+  const handleCancel = () => {
+    if (controller) {
+      controller.abort();
       setLoading(false);
+      setController(null);
+      setError("Analysis canceled");
     }
   };
 
@@ -319,13 +402,13 @@ const Analyzer = () => {
     setPreviewURL(null);
     setPdfOpen(false);
     setFormData({
-      JOB_ROLE: '',
-      JOB_DESCRIPTION: '',
-      JOB_RESPONSIBILITIES: '',
-      DEADLINE: '',
-      EXPERIENCE_WANTED: '',
-      REQUIRED_SKILLS: '',
-      SPECIAL_NOTES: ''
+      JOB_ROLE: "",
+      JOB_DESCRIPTION: "",
+      JOB_RESPONSIBILITIES: "",
+      DEADLINE: "",
+      EXPERIENCE_WANTED: "",
+      REQUIRED_SKILLS: "",
+      SPECIAL_NOTES: "",
     });
   };
 
@@ -341,51 +424,116 @@ const Analyzer = () => {
             <form onSubmit={handleSubmit}>
               <FormGroup>
                 <label>Upload CV (PDF)</label>
-                <input type="file" accept="application/pdf" onChange={handleFileChange} required />
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={handleFileChange}
+                />
               </FormGroup>
-              
+
               <FormGroup>
                 <label>Job role</label>
-                <input name="JOB_ROLE" placeholder="e.g. Frontend Developer" value={formData.JOB_ROLE} onChange={handleInputChange} required />
+                <input
+                  name="JOB_ROLE"
+                  placeholder="e.g. Frontend Developer"
+                  value={formData.JOB_ROLE}
+                  onChange={handleInputChange}
+                />
               </FormGroup>
 
               <FormGroup>
                 <label>Job description</label>
-                <textarea name="JOB_DESCRIPTION" rows="3" placeholder="Paste the job description..." value={formData.JOB_DESCRIPTION} onChange={handleInputChange} required />
+                <textarea
+                  name="JOB_DESCRIPTION"
+                  rows="3"
+                  placeholder="Paste the job description..."
+                  value={formData.JOB_DESCRIPTION}
+                  onChange={handleInputChange}
+                />
               </FormGroup>
 
               <FormGroup>
                 <label>Job responsibilities</label>
-                <textarea name="JOB_RESPONSIBILITIES" rows="3" value={formData.JOB_RESPONSIBILITIES} onChange={handleInputChange} required />
+                <textarea
+                  name="JOB_RESPONSIBILITIES"
+                  rows="3"
+                  value={formData.JOB_RESPONSIBILITIES}
+                  onChange={handleInputChange}
+                />
               </FormGroup>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "12px",
+                }}
+              >
                 <FormGroup>
                   <label>Deadline</label>
-                  <input type="date" name="DEADLINE" value={formData.DEADLINE} onChange={handleInputChange} />
+                  <input
+                    type="date"
+                    name="DEADLINE"
+                    value={formData.DEADLINE}
+                    onChange={handleInputChange}
+                  />
                 </FormGroup>
                 <FormGroup>
                   <label>Experience wanted</label>
-                  <input name="EXPERIENCE_WANTED" placeholder="e.g. 2+ years" value={formData.EXPERIENCE_WANTED} onChange={handleInputChange} />
+                  <input
+                    name="EXPERIENCE_WANTED"
+                    placeholder="e.g. 2+ years"
+                    value={formData.EXPERIENCE_WANTED}
+                    onChange={handleInputChange}
+                  />
                 </FormGroup>
               </div>
 
               <FormGroup>
                 <label>Required skills</label>
-                <input name="REQUIRED_SKILLS" placeholder="e.g. React, Node.js" value={formData.REQUIRED_SKILLS} onChange={handleInputChange} />
+                <input
+                  name="REQUIRED_SKILLS"
+                  placeholder="e.g. React, Node.js"
+                  value={formData.REQUIRED_SKILLS}
+                  onChange={handleInputChange}
+                />
               </FormGroup>
 
               <FormGroup>
                 <label>Special notes</label>
-                <textarea name="SPECIAL_NOTES" rows="2" value={formData.SPECIAL_NOTES} onChange={handleInputChange} />
+                <textarea
+                  name="SPECIAL_NOTES"
+                  rows="2"
+                  value={formData.SPECIAL_NOTES}
+                  onChange={handleInputChange}
+                />
               </FormGroup>
 
               <Button type="submit" disabled={loading}>
-                {loading ? 'Analyzing...' : 'Analyze resume'}
+                {loading ? "Analyzing..." : "Analyze resume"}
               </Button>
+              {loading && (
+                <CancelButton type="button" onClick={handleCancel}>
+                  Cancel
+                </CancelButton>
+              )}
             </form>
-            {loading && <p style={{ marginTop: 10, fontSize: 13, color: 'var(--text-muted)' }}>Analyzing your resume — this may take a moment...</p>}
-            {error && <p style={{ marginTop: 10, color: 'var(--error)', fontSize: 13 }}>{error}</p>}
+            {loading && (
+              <p
+                style={{
+                  marginTop: 10,
+                  fontSize: 13,
+                  color: "var(--text-muted)",
+                }}
+              >
+                Analyzing your resume — this may take a moment...
+              </p>
+            )}
+            {error && (
+              <p style={{ marginTop: 10, color: "var(--error)", fontSize: 13 }}>
+                {error}
+              </p>
+            )}
           </FormCard>
 
           <PDFSection visible={!!previewURL}>
@@ -394,7 +542,15 @@ const Analyzer = () => {
                 <span>Uploaded CV</span>
                 <span className="file-name">{file?.name}</span>
               </div>
-              <Chevron open={pdfOpen} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <Chevron
+                open={pdfOpen}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <polyline points="6 9 12 15 18 9"></polyline>
               </Chevron>
             </CollapsibleHeader>
@@ -411,12 +567,16 @@ const Analyzer = () => {
             <MetricCard color="#639922">
               <div className="label">ATS score</div>
               <div className="value">{result.ats_score}/100</div>
-              <ProgressBar color="#639922" width={result.ats_score}><div /></ProgressBar>
+              <ProgressBar color="#639922" width={result.ats_score}>
+                <div />
+              </ProgressBar>
             </MetricCard>
             <MetricCard color="#185FA5">
               <div className="label">Job match</div>
               <div className="value">{result.job_match_percentage}%</div>
-              <ProgressBar color="#185FA5" width={result.job_match_percentage}><div /></ProgressBar>
+              <ProgressBar color="#185FA5" width={result.job_match_percentage}>
+                <div />
+              </ProgressBar>
             </MetricCard>
           </Metrics>
 
@@ -424,56 +584,94 @@ const Analyzer = () => {
             <Card>
               <h3>Strengths</h3>
               <List>
-                {result.strengths?.map((s, i) => <li key={i}>{s}</li>)}
+                {result.strengths?.map((s, i) => (
+                  <li key={i}>{s}</li>
+                ))}
               </List>
             </Card>
             <Card>
               <h3>Gaps</h3>
               <List>
-                {result.gaps?.map((g, i) => <li key={i}>{g}</li>)}
+                {result.gaps?.map((g, i) => (
+                  <li key={i}>{g}</li>
+                ))}
               </List>
             </Card>
-            
-            <SectionTitle style={{ gridColumn: 'span 2' }}>CV improvements</SectionTitle>
+
+            <SectionTitle style={{ gridColumn: "span 2" }}>
+              CV improvements
+            </SectionTitle>
             <WideCard>
               <List>
-                {result.places_to_upgrade_in_cv?.map((item, i) => <li key={i}>{item}</li>)}
+                {result.places_to_upgrade_in_cv?.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
               </List>
             </WideCard>
 
-            <SectionTitle style={{ gridColumn: 'span 2' }}>Missing keywords</SectionTitle>
-            <div style={{ gridColumn: 'span 2' }}>
+            <SectionTitle style={{ gridColumn: "span 2" }}>
+              Missing keywords
+            </SectionTitle>
+            <div style={{ gridColumn: "span 2" }}>
               <TagList>
-                {result.missing_keywords?.map((k, i) => <Tag key={i} bgColor="rgba(239, 68, 68, 0.1)" textColor="#ef4444">{k}</Tag>)}
+                {result.missing_keywords?.map((k, i) => (
+                  <Tag
+                    key={i}
+                    bgColor="rgba(239, 68, 68, 0.1)"
+                    textColor="#ef4444"
+                  >
+                    {k}
+                  </Tag>
+                ))}
               </TagList>
             </div>
 
-            <SectionTitle style={{ gridColumn: 'span 2' }}>Skills to learn</SectionTitle>
-            <div style={{ gridColumn: 'span 2' }}>
+            <SectionTitle style={{ gridColumn: "span 2" }}>
+              Skills to learn
+            </SectionTitle>
+            <div style={{ gridColumn: "span 2" }}>
               <TagList>
-                {result.skills_to_learn?.map((s, i) => <Tag key={i} bgColor="rgba(34, 211, 238, 0.1)" textColor="#22d3ee">{s}</Tag>)}
+                {result.skills_to_learn?.map((s, i) => (
+                  <Tag
+                    key={i}
+                    bgColor="rgba(34, 211, 238, 0.1)"
+                    textColor="#22d3ee"
+                  >
+                    {s}
+                  </Tag>
+                ))}
               </TagList>
             </div>
 
-            <SectionTitle style={{ gridColumn: 'span 2' }}>Learning resources</SectionTitle>
+            <SectionTitle style={{ gridColumn: "span 2" }}>
+              Learning resources
+            </SectionTitle>
             <WideCard>
               {result.learning_resources?.map((r, i) => (
                 <ResourceBlock key={i}>
                   <div className="skill-name">{r.skill}</div>
-                  {r.resources?.map((res, j) => <div className="resource-item" key={j}>{res}</div>)}
+                  {r.resources?.map((res, j) => (
+                    <div className="resource-item" key={j}>
+                      {res}
+                    </div>
+                  ))}
                 </ResourceBlock>
               ))}
             </WideCard>
 
-            <SectionTitle style={{ gridColumn: 'span 2' }}>Suggestions</SectionTitle>
+            <SectionTitle style={{ gridColumn: "span 2" }}>
+              Suggestions
+            </SectionTitle>
             <WideCard>
               <List>
-                {result.suggestions?.map((s, i) => <li key={i}>{s}</li>)}
+                {result.suggestions?.map((s, i) => (
+                  <li key={i}>{s}</li>
+                ))}
               </List>
             </WideCard>
           </CardGrid>
 
-          <div style={{ marginTop: '24px' }}>
+          <div style={{ marginTop: "24px" }}>
             <Button onClick={resetPage}>Analyze another</Button>
           </div>
         </ResultsSection>
